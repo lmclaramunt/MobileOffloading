@@ -35,6 +35,7 @@
         android:layout_marginTop="15dp"
         android:text="@string/join"
         android:textAllCaps="false"
+        android:onClick="joinLobby"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline1" />
@@ -47,7 +48,6 @@
         android:text="@string/mobile_offloading"
         android:textSize="24sp"
         android:textColor="@color/black"
-        android:onClick="joinMobileOff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

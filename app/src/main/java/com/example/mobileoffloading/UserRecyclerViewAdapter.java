@@ -40,12 +40,13 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder{
-        public TextView userName, userLocation, userBattery;
+        public TextView userName, userLatitude, userLongitude, userBattery;
 
         public UserViewHolder(@NonNull View itemView, OnItemClickListener clickListener) {
             super(itemView);
             userName = itemView.findViewById(R.id.tvUsername);
-            userLocation = itemView.findViewById(R.id.tvLocation);
+            userLatitude = itemView.findViewById(R.id.tvLatitude);
+            userLongitude = itemView.findViewById(R.id.tvLongitude);
             userBattery = itemView.findViewById(R.id.tvBattery);
 
             itemView.setOnClickListener(v -> {
@@ -80,9 +81,8 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         User user = userList.get(position);
         holder.userName.setText(user.getUsername());
         holder.userBattery.setText(user.getBattery() + "%");
-        float lat = user.getLatitude();
-        float log = user.getLongitude();
-        holder.userLocation.setText(lat + ", " + log);
+        holder.userLatitude.setText(String.valueOf(user.getLatitude()));
+        holder.userLongitude.setText(String.valueOf(user.getLongitude()));
     }
 
     /**

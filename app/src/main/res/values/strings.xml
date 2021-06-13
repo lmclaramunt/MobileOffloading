@@ -3,4 +3,7 @@
     <string name="username">Username</string>
     <string name="join">Join</string>
     <string name="mobile_offloading">Mobile Offloading</string>
+    <string name="start">Start</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
 </resources>

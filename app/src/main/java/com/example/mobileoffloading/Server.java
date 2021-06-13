@@ -16,4 +16,6 @@ public class Server extends Application {
             throw new RuntimeException(e);
         }
     }
+
+    public Socket getSocket() {return socket;}
 }
