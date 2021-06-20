@@ -70,6 +70,7 @@ public class Lobby extends AppCompatActivity {
         socket.on("userAdded", onUserAdded);
         socket.on("lobbyUsers", onLobbyUsers);
         socket.on("update user", onUpdateUser);
+        socket.on("update admin", onUpdateAdmin);
         socket.emit("joinLobby", "");
     }
 
@@ -79,6 +80,7 @@ public class Lobby extends AppCompatActivity {
         socket.off("userAdded", onUserAdded);
         socket.off("lobbyUsers", onLobbyUsers);
         socket.off("update user", onUpdateUser);
+        socket.off("update admin", onUpdateAdmin);
     }
 
     /**
@@ -131,11 +133,18 @@ public class Lobby extends AppCompatActivity {
             JSONObject data = (JSONObject) args[0];
             String username = data.getString("username");
             float battery = (float) data.getDouble("battery");
-            boolean admin = data.getBoolean("admin");
-            if(admin){
-                adapter.removeAdmin();      // So the UI is updated
-            }
-            adapter.updateBattery(username, battery, admin);
+            adapter.updateBattery(username, battery);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    });
+
+    private final Emitter.Listener onUpdateAdmin = args -> runOnUiThread(() -> {
+        try {
+            JSONObject data = (JSONObject) args[0];
+            String username = data.getString("username");
+            adapter.removeAdmin();
+            adapter.updateAdmin(username);
             updateAdminInterface();
         } catch (JSONException e) {
             e.printStackTrace();

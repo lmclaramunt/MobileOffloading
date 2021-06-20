@@ -148,13 +148,25 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
      * Update the batter of the User under the given username
      * @param username - User's username
      * @param battery - new battery level
-     * @param admin - true if the user is now admin
      */
-    public void updateBattery(String username, float battery, boolean admin){
+    public void updateBattery(String username, float battery){
         for(int i = 0; i < userList.size(); i++){
             if(userList.get(i).getUsername().equals(username)){
                userList.get(i).setBattery(battery);
-               userList.get(i).setAdmin(admin);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Update who is the admin in the ArrayList
+     * @param username - name of the new Admin
+     */
+    public void updateAdmin(String username){
+        for(int i = 0; i < userList.size(); i++){
+            if(userList.get(i).getUsername().equals(username)){
+                userList.get(i).setAdmin(true);
                 notifyItemChanged(i);
                 break;
             }
