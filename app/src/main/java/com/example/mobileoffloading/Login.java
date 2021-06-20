@@ -2,10 +2,8 @@ package com.example.mobileoffloading;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -35,25 +33,21 @@ import io.socket.emitter.Emitter;
 
 /**
  * @author Luis Claramunt
- * Lobby where the users input their username and join the Mobile Offloading server
+ *         Daniel Evans
+ *         Ting Xia
+ *         Jianlun Li
+ * Activity where the users inputs his/her username and join the Mobile Offloading server
  */
 public class Login extends AppCompatActivity {
+    public static final String BATTERY = "battery";
+    public static final String USERNAME = "username";
     public double lat, lon;
     public String username = null;
-    public float battery;
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
-        @SuppressLint("SetTextI18n")
-        @Override
-        public void onReceive(Context ctx, Intent intent) {
-            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-            int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-            battery = level * 100 / (float) scale;
-        }
-    };
+    private float battery;
     private EditText textUsername;
     private FusedLocationProviderClient fusedLocation;
     private Socket socket;
-    private boolean serverConn = true;
+    private boolean processingRequest = false;      // Wait for server results before sending next request
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +55,11 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setTitle("Login");
         textUsername = findViewById(R.id.textUsername);
-        this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         fusedLocation = LocationServices.getFusedLocationProviderClient(getApplicationContext());
         getLocation();
         Server server = (Server) getApplication();
         socket = server.getSocket();
-//        socket.on(Socket.EVENT_CONNECT, connEmitter);
-        socket.on(Socket.EVENT_CONNECT, connEmitter);
+        socket.on("login results", onLoginResults);
         socket.connect();
     }
 
@@ -77,17 +69,34 @@ public class Login extends AppCompatActivity {
      */
     public void joinLobby(View view) {
         username = textUsername.getText().toString().trim();
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("username", username);
-            jsonObject.put("battery", battery);
-            jsonObject.put("latitude", lat);
-            jsonObject.put("longitude", lon);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (username.isEmpty()) {
+            Toast.makeText(Login.this, "Please enter a username", Toast.LENGTH_SHORT).show();
+            return;
         }
-        socket.emit("login", jsonObject);
-        startActivity(new Intent(getApplicationContext(), Lobby.class));
+        if (!processingRequest) {
+            battery = (float) getBattery(getApplicationContext());
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("username", username);
+                jsonObject.put("battery", battery);
+                jsonObject.put("latitude", lat);
+                jsonObject.put("longitude", lon);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            socket.emit("login", jsonObject);
+            processingRequest = true;
+        }
+    }
+
+    /**
+     * Get battery percentage from device, will be useful when the user joins the lobby
+     * @param context - Context
+     * @return - int, device's battery percentage
+     */
+    private int getBattery(Context context) {
+        BatteryManager batteryMan = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
+        return batteryMan.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
     }
 
     /**
@@ -114,6 +123,9 @@ public class Login extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks current location permissions, and asks for them if disabled
+     */
     private void checkLocationPerm() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -139,7 +151,7 @@ public class Login extends AppCompatActivity {
         fusedLocation.requestLocationUpdates(request, locCallback, Looper.myLooper());
     }
 
-    private LocationCallback locCallback = new LocationCallback() {
+    private final LocationCallback locCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult results) {
             Location loc = results.getLastLocation();
@@ -148,21 +160,25 @@ public class Login extends AppCompatActivity {
         }
     };
 
-    private final Emitter.Listener connEmitter = args -> runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-            if(!serverConn) {
-                username = textUsername.getText().toString().trim();
-                if (!username.isEmpty()) {
-                    socket.emit("joinLobby", username);
-                } else {
-                    serverConn = true;
-                }
+    /**
+     * Tells if the user was able to login and join the lobby
+     */
+    private final Emitter.Listener onLoginResults = args -> runOnUiThread(() -> {
+        try {
+            JSONObject json = (JSONObject) args[0];
+            boolean results = json.getBoolean("results");
+            if(results) {
+                Intent intent = new Intent(getApplicationContext(), Lobby.class);
+                intent.putExtra(BATTERY, battery);
+                intent.putExtra(USERNAME, username);
+                startActivity(intent);
+            }else{
+                Toast.makeText(Login.this, "Sorry, username '" + username + "' is not available",
+                        Toast.LENGTH_SHORT).show();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        processingRequest = false;
     });
-
-
-
-
 }

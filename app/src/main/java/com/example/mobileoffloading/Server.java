@@ -7,6 +7,13 @@ import io.socket.client.Socket;
 
 import java.net.URISyntaxException;
 
+/**
+ * @author Luis Claramunt
+ *         Daniel Evans
+ *         Ting Xia
+ *         Jianlun Li
+ * Socket used to communicate with the server
+ */
 public class Server extends Application {
     private Socket socket;
     {

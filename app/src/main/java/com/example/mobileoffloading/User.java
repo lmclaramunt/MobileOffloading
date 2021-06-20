@@ -2,18 +2,23 @@ package com.example.mobileoffloading;
 
 /**
  * @author Luis Claramunt
+ *         Daniel Evans
+ *         Ting Xia
+ *         Jianlun Li
  * Class used to handle users' data
  */
 public class User {
     private String username;
-    private int battery;
+    private float battery;
     private float latitude, longitude;
+    private boolean admin;
 
-    public User(String username, int battery, float latitude, float longitude){
+    public User(String username, float battery, float latitude, float longitude, boolean admin){
         this.username=username;
         this.battery=battery;
         this.latitude=latitude;
         this.longitude=longitude;
+        this.admin=admin;
     }
 
     public String getUsername() {
@@ -24,11 +29,11 @@ public class User {
         this.username = username;
     }
 
-    public int getBattery() {
+    public float getBattery() {
         return battery;
     }
 
-    public void setBattery(int battery) {
+    public void setBattery(float battery) {
         this.battery = battery;
     }
 
@@ -46,5 +51,13 @@ public class User {
 
     public void setLongitude(float longitude) {
         this.longitude = longitude;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

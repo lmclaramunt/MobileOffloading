@@ -15,6 +15,9 @@ import java.util.logging.LogRecord;
 
 /**
  * @author Luis Claramunt
+ *         Daniel Evans
+ *         Ting Xia
+ *         Jianlun Li
  * RecyclerView Adapter to display User Data:
  *      username, location, and battery
  */
@@ -40,7 +43,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder{
-        public TextView userName, userLatitude, userLongitude, userBattery;
+        public TextView userName, userLatitude, userLongitude, userBattery, userAdmin;
 
         public UserViewHolder(@NonNull View itemView, OnItemClickListener clickListener) {
             super(itemView);
@@ -48,6 +51,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             userLatitude = itemView.findViewById(R.id.tvLatitude);
             userLongitude = itemView.findViewById(R.id.tvLongitude);
             userBattery = itemView.findViewById(R.id.tvBattery);
+            userAdmin = itemView.findViewById(R.id.txtAdmin);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -83,6 +87,8 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         holder.userBattery.setText(user.getBattery() + "%");
         holder.userLatitude.setText(String.valueOf(user.getLatitude()));
         holder.userLongitude.setText(String.valueOf(user.getLongitude()));
+        int adminVis = (user.isAdmin()) ? View.VISIBLE : View.GONE;
+        holder.userAdmin.setVisibility(adminVis);
     }
 
     /**
@@ -95,7 +101,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     }
 
     /**
-     * An user's info has been updated, therefore the arrayList with this info
+     * An user's info has been updated, therefore update the arrayList with this info
      * @param position - position in the arrayList
      * @param user - Updated user
      */
@@ -111,6 +117,48 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     public void userRemoved(int position){
         userList.remove(position);
         notifyItemRemoved(position);
+    }
+
+    /**
+     * Remove the current Admin in the ArrayList
+     */
+    public void removeAdmin(){
+        for(int i = 0; i < userList.size(); i++){
+            if(userList.get(i).isAdmin()){
+                userList.get(i).setAdmin(false);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    /**
+     * There should only be one admin, check if you are logged in as it
+     * @return
+     */
+    public String getAdminUsername(){
+        for(User user: userList){
+            if(user.isAdmin())
+                return user.getUsername();
+        }
+        return null;
+    }
+
+    /**
+     * Update the batter of the User under the given username
+     * @param username - User's username
+     * @param battery - new battery level
+     * @param admin - true if the user is now admin
+     */
+    public void updateBattery(String username, float battery, boolean admin){
+        for(int i = 0; i < userList.size(); i++){
+            if(userList.get(i).getUsername().equals(username)){
+               userList.get(i).setBattery(battery);
+               userList.get(i).setAdmin(admin);
+                notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     /**
