@@ -1,4 +1,4 @@
-package com.example.mobileoffloading;
+package com.example.mobileoffloading.Utils;
 
 /**
  * @author Luis Claramunt

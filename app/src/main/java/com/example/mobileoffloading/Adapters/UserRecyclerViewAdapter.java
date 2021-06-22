@@ -1,4 +1,4 @@
-package com.example.mobileoffloading;
+package com.example.mobileoffloading.Adapters;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mobileoffloading.R;
+import com.example.mobileoffloading.Utils.User;
 
 import java.util.ArrayList;
 import java.util.logging.Filter;
@@ -77,7 +80,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     }
 
     /**
-     * Pass values to the App's TextViews displayed in the RecyclerView rows
+     * Pass values to the User's TextViews displayed in the RecyclerView rows
      */
     @SuppressLint("SetTextI18n")
     @Override
@@ -98,16 +101,6 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     public void addUser(User user){
         userList.add(user);
         notifyItemInserted(userList.size()-1);
-    }
-
-    /**
-     * An user's info has been updated, therefore update the arrayList with this info
-     * @param position - position in the arrayList
-     * @param user - Updated user
-     */
-    public void userEdited(int position, User user){
-        userList.set(position, user);
-        notifyItemChanged(position);
     }
 
     /**

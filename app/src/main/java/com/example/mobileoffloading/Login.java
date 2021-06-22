@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.mobileoffloading.Utils.Server;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -56,11 +57,23 @@ public class Login extends AppCompatActivity {
         setTitle("Login");
         textUsername = findViewById(R.id.textUsername);
         fusedLocation = LocationServices.getFusedLocationProviderClient(getApplicationContext());
-        getLocation();
         Server server = (Server) getApplication();
         socket = server.getSocket();
         socket.on("login results", onLoginResults);
         socket.connect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        socket.disconnect();
+        socket.off("login results", onLoginResults);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLocation();          //In case the location has changed
     }
 
     /**

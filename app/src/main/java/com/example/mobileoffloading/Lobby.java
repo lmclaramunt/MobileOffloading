@@ -1,4 +1,4 @@
-package com.example.mobileoffloading;
+  package com.example.mobileoffloading;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -13,6 +13,10 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mobileoffloading.Adapters.UserRecyclerViewAdapter;
+import com.example.mobileoffloading.Utils.Server;
+import com.example.mobileoffloading.Utils.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +44,7 @@ public class Lobby extends AppCompatActivity {
     private String username;
     private Button btnStart;
     //Used to constantly monitor device's battery
-    private BroadcastReceiver batteryBroadcast = new BroadcastReceiver() {
+    private final BroadcastReceiver batteryBroadcast = new BroadcastReceiver() {
         @SuppressLint("SetTextI18n")
         @Override
         public void onReceive(Context ctx, Intent intent) {
@@ -64,13 +68,21 @@ public class Lobby extends AppCompatActivity {
         this.registerReceiver(this.batteryBroadcast, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         userList = new ArrayList<>();
         btnStart = findViewById(R.id.btnStart);
-        initRecyclerView();
         Server server = (Server) getApplication();
         socket = server.getSocket();
         socket.on("userAdded", onUserAdded);
         socket.on("lobbyUsers", onLobbyUsers);
         socket.on("update user", onUpdateUser);
         socket.on("update admin", onUpdateAdmin);
+        socket.on("rejected", onRejected);
+        socket.on("go admin", onGoAdmin);
+        socket.on("go servant", onGoServant);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initRecyclerView();
         socket.emit("joinLobby", "");
     }
 
@@ -81,6 +93,9 @@ public class Lobby extends AppCompatActivity {
         socket.off("lobbyUsers", onLobbyUsers);
         socket.off("update user", onUpdateUser);
         socket.off("update admin", onUpdateAdmin);
+        socket.off("rejected", onRejected);
+        socket.off("go admin", onGoAdmin);
+        socket.off("go servant", onGoServant);
     }
 
     /**
@@ -128,6 +143,9 @@ public class Lobby extends AppCompatActivity {
         updateAdminInterface();
     });
 
+    /**
+     * The information of a user has been changed, so update the UI
+     */
     private final Emitter.Listener onUpdateUser = args -> runOnUiThread(() -> {
         try {
             JSONObject data = (JSONObject) args[0];
@@ -139,6 +157,9 @@ public class Lobby extends AppCompatActivity {
         }
     });
 
+    /**
+     * There is a new Admin, so update the UI
+     */
     private final Emitter.Listener onUpdateAdmin = args -> runOnUiThread(() -> {
         try {
             JSONObject data = (JSONObject) args[0];
@@ -146,6 +167,46 @@ public class Lobby extends AppCompatActivity {
             adapter.removeAdmin();
             adapter.updateAdmin(username);
             updateAdminInterface();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    });
+
+    /**
+     * The user does not meet the requirements to be a Server
+     * So take the user back to the lobby
+     */
+    private final Emitter.Listener onRejected = args -> runOnUiThread(() -> {
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    });
+
+    /**
+     * The user is the Admin, so take him/her to the Admin Activity
+     */
+    private final Emitter.Listener onGoAdmin = args -> runOnUiThread(() -> {
+        try {
+            JSONObject data = (JSONObject) args[0];
+            int servants = data.getInt("servants");
+            Intent intent = new Intent(getApplicationContext(), Master.class);
+            intent.putExtra("servants", servants);
+            startActivity(intent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    });
+
+    /**
+     * The user is a valid servant, so take him/her to the servant class
+     */
+    private final Emitter.Listener onGoServant = args -> runOnUiThread(() -> {
+        try {
+            JSONObject data = (JSONObject) args[0];
+            String id = data.getString("id");
+            Intent intent = new Intent(getApplicationContext(), Servant.class);
+            intent.putExtra("id", id);
+            startActivity(intent);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -176,5 +237,13 @@ public class Lobby extends AppCompatActivity {
         }else{
             btnStart.setVisibility(View.INVISIBLE);
         }
+    }
+
+    /**
+     * OnClick Lister for the master to start the master activity
+     * @param view - for button
+     */
+    public void startMasterActivity(View view) {
+        socket.emit("start master", "");
     }
 }

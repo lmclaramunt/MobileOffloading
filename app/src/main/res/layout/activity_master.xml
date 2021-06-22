@@ -3,29 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Lobby">
+    tools:context=".Master">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/first_matrix_instructions"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/users_list_view"
+        android:id="@+id/matrix_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="4dp"
         android:scrollbars="vertical"
-        android:layout_marginBottom="85dp"/>
+        android:layout_marginBottom="85dp"
+        android:layout_marginTop="20dp"/>
 
     <Button
-        android:id="@+id/btnStart"
+        android:id="@+id/btnNextPrevOne"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/users_list_view"
+        android:layout_below="@+id/matrix_list_view"
         android:layout_marginTop="-75dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/start"
-        android:onClick="startMasterActivity"
-        android:visibility="invisible"
+        android:text="@string/preview_matrix"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="16sp"/>
 
 </RelativeLayout>
+

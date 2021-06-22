@@ -7,4 +7,11 @@
     <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
     <string name="admin">ADMIN</string>
+    <string name="preview_matrix">Preview Matrix</string>
+    <string name="first_matrix_instructions">Write the first matrix for matrix multiplication</string>
+    <string name="numbers_separated_by_commas">Numbers separated by commas</string>
+    <string name="plus">plus</string>
+    <string name="please_confirm">Please Confirm</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.mobileoffloading;
+package com.example.mobileoffloading.Utils;
 
 import android.app.Application;
 
