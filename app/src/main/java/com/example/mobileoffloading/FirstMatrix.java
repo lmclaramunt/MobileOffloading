@@ -1,10 +1,11 @@
 package com.example.mobileoffloading;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,14 +25,15 @@ import java.util.ArrayList;
  *         Jianlun Li
  * First activity for the Master. Here he/she will be able to create the first matrix
  */
-public class Master extends AppCompatActivity {
-    private ArrayList<ArrayList<Integer>> rowList;
+public class FirstMatrix extends AppCompatActivity {
+    private static ArrayList<ArrayList<Integer>> rowList;
     private MatrixRecyclerViewAdapter adapter;
+    public static String FIRST_MATRIX_ROWS = "first_row";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_master);
+        setContentView(R.layout.activity_first_matrix);
         rowList = new ArrayList<>();
         setTitle("Admin");
         initRecyclerView();
@@ -95,4 +97,22 @@ public class Master extends AppCompatActivity {
         }
     }
 
+    /**
+     * OnClick Listener - The master finished writing the first matrix
+     * @param view - for button
+     */
+    public void submitFirstMatrix(View view) {
+        if(adapter.validateMatrix(getApplicationContext())){
+            int rows = adapter.getRows();
+            Intent intent = new Intent(this, FirstMatrixPrev.class);
+            intent.putExtra(FIRST_MATRIX_ROWS, rows);
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * Get the matrix as a 2D Array
+     * @return - First Matrix
+     */
+    public static ArrayList<ArrayList<Integer>> getFirstMatrix(){ return rowList;}
 }

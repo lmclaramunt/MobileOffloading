@@ -14,4 +14,6 @@
     <string name="please_confirm">Please Confirm</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="first_matrix_preview">First Matrix Preview\n</string>
+    <string name="second_matrix">Second Matrix</string>
 </resources>

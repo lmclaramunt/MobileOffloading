@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Master">
+    tools:context=".FirstMatrix">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +29,7 @@
         android:layout_marginTop="-75dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:onClick="submitFirstMatrix"
         android:text="@string/preview_matrix"
         android:textAllCaps="false"
         android:textColor="@android:color/white"

@@ -189,7 +189,7 @@ public class Lobby extends AppCompatActivity {
         try {
             JSONObject data = (JSONObject) args[0];
             int servants = data.getInt("servants");
-            Intent intent = new Intent(getApplicationContext(), Master.class);
+            Intent intent = new Intent(getApplicationContext(), FirstMatrix.class);
             intent.putExtra("servants", servants);
             startActivity(intent);
         } catch (JSONException e) {

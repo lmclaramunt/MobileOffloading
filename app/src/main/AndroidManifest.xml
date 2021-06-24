@@ -15,19 +15,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MobileOffloading">
-        <activity android:name=".Servant"/>
-        <activity android:name=".Master"
+        <activity android:name=".FirstMatrixPrev"
+            android:parentActivityName=".FirstMatrix"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop"/>
-        <activity android:name=".Lobby"
+            android:launchMode="singleTop" />
+        <activity android:name=".Servant" />
+        <activity
+            android:name=".FirstMatrix"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".Lobby"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"
-            android:parentActivityName=".Login"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <activity android:name=".Login"
-            android:launchMode="singleTop"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+            android:parentActivityName=".Login" />
+        <activity
+            android:name=".Login"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

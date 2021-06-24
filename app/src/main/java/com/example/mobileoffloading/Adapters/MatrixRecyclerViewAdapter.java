@@ -1,11 +1,16 @@
 package com.example.mobileoffloading.Adapters;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +32,7 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
 
     private ArrayList<ArrayList<Integer>> rowList;      // Double ArrayList
     private OnItemClickListener listener;
+    private int rows, columns;
 
 
     /**
@@ -53,6 +59,7 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
             rowName = itemView.findViewById(R.id.txtMatRow);
             rowText = itemView.findViewById(R.id.editTextMatrixRow);
 
+
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if(clickListener != null && position != RecyclerView.NO_POSITION){
@@ -64,6 +71,8 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
 
     public MatrixRecyclerViewAdapter(ArrayList<ArrayList<Integer>> rowList){
         this.rowList = rowList;
+        columns = 0;
+        rows = 0;
     }
 
     /**
@@ -83,6 +92,31 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
     @Override
     public void onBindViewHolder(@NonNull MatrixViewHolder holder, int position) {
         holder.rowName.setText("Row " + (position+1));
+        holder.rowText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ArrayList<Integer> numList = new ArrayList<>();
+                String[] nums = s.toString().split(",");
+                for(String n: nums) {
+                    try {
+                        numList.add(Integer.parseInt(n));
+                    }catch (Exception e){
+                        Toast.makeText(holder.rowText.getContext(), "Invalid numbers/char on row " +(position+1),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if(rowList.size() <= position)
+                    rowList.add(numList);
+                else
+                    rowList.set(position, numList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
     }
 
     /**
@@ -112,6 +146,36 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
         rowList.remove(position);
         notifyItemRemoved(position);
     }
+
+    /**
+     * Check if the user wrote a matrix with proper dimensions (rows and columns)
+     * @return - boolean, true if valid and false if invalid
+     */
+    public boolean validateMatrix(Context context){
+        for(int i = 0; i < rowList.size(); i++) {
+            if (i == 0) {
+                columns = rowList.get(i).size();
+            }else if(columns != rowList.get(i).size()){
+                Toast.makeText(context, "Row "+ (i+1) +"has wrong dimensions",
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        rows = rowList.size();
+        return true;
+    }
+
+    /**
+     * Get Matrix's Rows
+     * @return - int
+     */
+    public int getRows(){return rows;}
+
+    /**
+     * Get Matrix's Columns
+     * @return - int
+     */
+    public int getColumns(){return columns;}
 
     /**
      * Get the number of user displayed in the RecyclerView
