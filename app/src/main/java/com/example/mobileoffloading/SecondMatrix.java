@@ -1,18 +1,19 @@
 package com.example.mobileoffloading;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.mobileoffloading.Adapters.MatrixRecyclerViewAdapter;
 
@@ -23,28 +24,28 @@ import java.util.ArrayList;
  *         Daniel Evans
  *         Ting Xia
  *         Jianlun Li
- * First activity for the Master. Here he/she will be able to create the first matrix
+ * Second activity for the Master. Here he/she will be able to create the second matrix
  */
-public class FirstMatrix extends AppCompatActivity {
+public class SecondMatrix extends AppCompatActivity {
     private static ArrayList<ArrayList<Integer>> rowList;
     private MatrixRecyclerViewAdapter adapter;
-    public static String FIRST_MATRIX_ROWS = "first_row";
+    private int firstRows;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first_matrix);
-        setTitle("Admin");
+        setContentView(R.layout.activity_second_matrix);
+        firstRows = getIntent().getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
         rowList = new ArrayList<>();
+        setTitle("Admin");
         initRecyclerView();
     }
-
 
     /**
      * Initialize the RecyclerView that displays the User's
      */
     private void initRecyclerView(){
-        RecyclerView recyclerView = findViewById(R.id.matrix_list_view);
+        RecyclerView recyclerView = findViewById(R.id.second_matrix_list_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         adapter = new MatrixRecyclerViewAdapter(rowList);
         recyclerView.setLayoutManager(layoutManager);
@@ -97,22 +98,21 @@ public class FirstMatrix extends AppCompatActivity {
         }
     }
 
-    /**
-     * OnClick Listener - The master finished writing the first matrix
-     * @param view - for button
-     */
-    public void submitFirstMatrix(View view) {
+    public void submitSecondMatrix(View view) {
         if(adapter.validateMatrix(getApplicationContext())){
-            int rows = adapter.getRows();
-            Intent intent = new Intent(this, SecondMatrix.class);
-            intent.putExtra(FIRST_MATRIX_ROWS, rows);
-            startActivity(intent);
+            int columns = adapter.getColumns();
+            if(columns == firstRows) {
+                startActivity(new Intent(this, MatrixPrev.class));
+            }else{
+                Toast.makeText(getApplicationContext(), "Invalid dimensions based on Matrix 1 # of rows",
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     /**
      * Get the matrix as a 2D Array
-     * @return - First Matrix
+     * @return - Second Matrix
      */
     public static ArrayList<ArrayList<Integer>> getMatrix(){ return rowList;}
 }

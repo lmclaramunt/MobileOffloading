@@ -1,6 +1,5 @@
 package com.example.mobileoffloading;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -14,21 +13,21 @@ import java.util.ArrayList;
  *         Daniel Evans
  *         Ting Xia
  *         Jianlun Li
- * Let the Admin Preview the first matrix
+ * Let the Admin Preview both matrixes that will be multiplied
  */
-public class FirstMatrixPrev extends AppCompatActivity {
-    private int firstRows;
+public class MatrixPrev extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first_matrix_prev);
-        TextView tvMatrix = findViewById(R.id.tvFirstMatrix);
+        setContentView(R.layout.activity_matrix_prev);
+        TextView tvFirstMatrix = findViewById(R.id.tvFirstMatrix);
+        TextView tvSecondMatrix = findViewById(R.id.tvSecondMatrix);
         setTitle("Admin");
-        Intent intent = getIntent();
-        firstRows = intent.getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
-        ArrayList<ArrayList<Integer>> firstMatrix = FirstMatrix.getFirstMatrix();
-        displayMatrixPreview(firstMatrix, tvMatrix);
+        ArrayList<ArrayList<Integer>> firstMatrix = FirstMatrix.getMatrix();
+        ArrayList<ArrayList<Integer>> secondMatrix = SecondMatrix.getMatrix();
+        displayMatrixPreview(firstMatrix, tvFirstMatrix);
+        displayMatrixPreview(secondMatrix, tvSecondMatrix);
     }
 
     /**
@@ -50,9 +49,7 @@ public class FirstMatrixPrev extends AppCompatActivity {
      * Let the Admin start the second matrix
      * @param view - for button
      */
-    public void startSecondMatrix(View view) {
-        Intent intent = new Intent(this, FirstMatrixPrev.class);
-        intent.putExtra(FirstMatrix.FIRST_MATRIX_ROWS, firstRows);
-        startActivity(intent);
+    public void uploadMatrix(View view) {
     }
+
 }

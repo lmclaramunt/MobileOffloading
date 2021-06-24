@@ -9,11 +9,15 @@
     <string name="admin">ADMIN</string>
     <string name="preview_matrix">Preview Matrix</string>
     <string name="first_matrix_instructions">Write the first matrix for matrix multiplication</string>
+    <string name="second_matrix_instructions">Write the second matrix for matrix multiplication.</string>
     <string name="numbers_separated_by_commas">Numbers separated by commas</string>
     <string name="plus">plus</string>
     <string name="please_confirm">Please Confirm</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="first_matrix_preview">First Matrix Preview\n</string>
+    <string name="first_matrix_preview">Matrix Multiplication Preview</string>
     <string name="second_matrix">Second Matrix</string>
+    <string name="matrix_multiplication">*</string>
+    <string name="process">Process</string>
+    <string name="restart">Restart</string>
 </resources>
