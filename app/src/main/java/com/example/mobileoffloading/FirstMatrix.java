@@ -28,7 +28,8 @@ import java.util.ArrayList;
 public class FirstMatrix extends AppCompatActivity {
     private static ArrayList<ArrayList<Integer>> rowList;
     private MatrixRecyclerViewAdapter adapter;
-    public static String FIRST_MATRIX_ROWS = "first_row";
+    public static String FIRST_MATRIX_COLUMNS = "first_columns";
+    public static String FIRST_MATRIX_ROWS = "first_rows";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,14 @@ public class FirstMatrix extends AppCompatActivity {
         setContentView(R.layout.activity_first_matrix);
         setTitle("Admin");
         rowList = new ArrayList<>();
+        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        rowList.add(list);
+        rowList.add(list);
+        rowList.add(list);
+        rowList.add(list);
         initRecyclerView();
     }
 
@@ -103,8 +112,10 @@ public class FirstMatrix extends AppCompatActivity {
      */
     public void submitFirstMatrix(View view) {
         if(adapter.validateMatrix(getApplicationContext())){
+            int columns = adapter.getColumns();
             int rows = adapter.getRows();
             Intent intent = new Intent(this, SecondMatrix.class);
+            intent.putExtra(FIRST_MATRIX_COLUMNS, columns);
             intent.putExtra(FIRST_MATRIX_ROWS, rows);
             startActivity(intent);
         }

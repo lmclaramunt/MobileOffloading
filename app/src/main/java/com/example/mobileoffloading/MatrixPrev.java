@@ -1,12 +1,22 @@
 package com.example.mobileoffloading;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mobileoffloading.Utils.Server;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 /**
  * @author Luis Claramunt
@@ -16,18 +26,36 @@ import java.util.ArrayList;
  * Let the Admin Preview both matrixes that will be multiplied
  */
 public class MatrixPrev extends AppCompatActivity {
+    private ArrayList<ArrayList<Integer>> firstMatrix, secondMatrix;
+    private Socket socket;
+    private int firstRows, secondRows, secondColumns;
+    private int[][] multiplicationResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matrix_prev);
+        setTitle("Admin");
         TextView tvFirstMatrix = findViewById(R.id.tvFirstMatrix);
         TextView tvSecondMatrix = findViewById(R.id.tvSecondMatrix);
-        setTitle("Admin");
-        ArrayList<ArrayList<Integer>> firstMatrix = FirstMatrix.getMatrix();
-        ArrayList<ArrayList<Integer>> secondMatrix = SecondMatrix.getMatrix();
+        Intent intent = getIntent();
+        firstRows = intent.getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
+        secondRows = intent.getIntExtra(SecondMatrix.SECOND_MATRIX_ROWS, 0);
+        secondColumns = intent.getIntExtra(SecondMatrix.SECOND_MATRIX_COLUMNS, 0);
+        multiplicationResults = new int[firstRows][secondColumns];
+        firstMatrix = FirstMatrix.getMatrix();
+        secondMatrix = SecondMatrix.getMatrix();
         displayMatrixPreview(firstMatrix, tvFirstMatrix);
         displayMatrixPreview(secondMatrix, tvSecondMatrix);
+        Server server = (Server) getApplication();
+        socket = server.getSocket();
+        socket.on("partial results", onPartialResults);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        socket.on("partial results", onPartialResults);
     }
 
     /**
@@ -49,7 +77,40 @@ public class MatrixPrev extends AppCompatActivity {
      * Let the Admin start the second matrix
      * @param view - for button
      */
-    public void uploadMatrix(View view) {
+    public void uploadMatrix(View view) throws JSONException {
+        secondMatrix = reArrangeMatrix(secondMatrix);
+        JSONArray matrixArray = new JSONArray();
+        matrixArray.put(0, firstMatrix);
+        matrixArray.put(1, secondMatrix);
+        matrixArray.put(2, firstRows);
+        matrixArray.put(3, secondRows);
+        matrixArray.put(4, secondColumns);
+        socket.emit("new matrices", matrixArray);
     }
+
+    /**
+     * Used for the second Matrix, which is given as a list of numbers in each rows, but for multiplying
+     * matrices it will be more useful to have it as a list of numbers in each column
+     * @param matrix - original matrix
+     * @return - matrix in terms of numbers in each column
+     */
+    private ArrayList<ArrayList<Integer>> reArrangeMatrix(ArrayList<ArrayList<Integer>> matrix){
+        ArrayList<ArrayList<Integer>> columnMatrix = new ArrayList<>();
+        for(int row = 0; row < matrix.get(0).size(); row++) {
+            ArrayList<Integer> rowNum = new ArrayList<>();
+            for (int column = 0; column < matrix.size(); column++) {
+                rowNum.add(matrix.get(column).get(row));
+            }
+            columnMatrix.add(rowNum);
+        }
+        return columnMatrix;
+    }
+
+    /**
+     * When a servant reports matrix multiplication results
+     */
+    private final Emitter.Listener onPartialResults = args -> runOnUiThread(() -> {
+
+    });
 
 }

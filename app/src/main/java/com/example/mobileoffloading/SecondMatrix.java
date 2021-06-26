@@ -27,16 +27,26 @@ import java.util.ArrayList;
  * Second activity for the Master. Here he/she will be able to create the second matrix
  */
 public class SecondMatrix extends AppCompatActivity {
+    public static final String SECOND_MATRIX_COLUMNS = "second_columns";
+    public static final String SECOND_MATRIX_ROWS = "second_rows";
     private static ArrayList<ArrayList<Integer>> rowList;
     private MatrixRecyclerViewAdapter adapter;
-    private int firstRows;
+    private int firstColumns, firstRows;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second_matrix);
+        firstColumns = getIntent().getIntExtra(FirstMatrix.FIRST_MATRIX_COLUMNS, 0);
         firstRows = getIntent().getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
         rowList = new ArrayList<>();
+        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
+        list.add(4);
+        list.add(5);
+        list.add(6);
+        rowList.add(list);
+        rowList.add(list);
+        rowList.add(list);
         setTitle("Admin");
         initRecyclerView();
     }
@@ -100,11 +110,15 @@ public class SecondMatrix extends AppCompatActivity {
 
     public void submitSecondMatrix(View view) {
         if(adapter.validateMatrix(getApplicationContext())){
-            int columns = adapter.getColumns();
-            if(columns == firstRows) {
-                startActivity(new Intent(this, MatrixPrev.class));
+            int rows = adapter.getRows();
+            if(rows == firstColumns) {
+                Intent intent = new Intent(this, MatrixPrev.class);
+                intent.putExtra(FirstMatrix.FIRST_MATRIX_ROWS, firstRows);
+                intent.putExtra(SECOND_MATRIX_COLUMNS, adapter.getColumns());
+                intent.putExtra(SECOND_MATRIX_ROWS, rows);
+                startActivity(intent);
             }else{
-                Toast.makeText(getApplicationContext(), "Invalid dimensions based on Matrix 1 # of rows",
+                Toast.makeText(getApplicationContext(), "Invalid dimensions based on Matrix 1 # of columns",
                         Toast.LENGTH_LONG).show();
             }
         }
