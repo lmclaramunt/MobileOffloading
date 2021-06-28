@@ -31,23 +31,28 @@ public class SecondMatrix extends AppCompatActivity {
     public static final String SECOND_MATRIX_ROWS = "second_rows";
     private static ArrayList<ArrayList<Integer>> rowList;
     private MatrixRecyclerViewAdapter adapter;
-    private int firstColumns, firstRows;
+    private int firstColumns, firstRows, servants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second_matrix);
-        firstColumns = getIntent().getIntExtra(FirstMatrix.FIRST_MATRIX_COLUMNS, 0);
-        firstRows = getIntent().getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
-        rowList = new ArrayList<>();
-        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
-        list.add(4);
-        list.add(5);
-        list.add(6);
-        rowList.add(list);
-        rowList.add(list);
-        rowList.add(list);
         setTitle("Admin");
+        Intent intent = getIntent();
+        firstColumns = intent.getIntExtra(FirstMatrix.FIRST_MATRIX_COLUMNS, 0);
+        firstRows = intent.getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
+        servants = intent.getIntExtra(Lobby.SERVANTS, 0);
+        rowList = new ArrayList<>();
+//        for(int i = 0; i < firstColumns; i++){
+//            rowList.add(new ArrayList<>());
+//        }
+        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        rowList.add(list);
+        rowList.add(list);
+        rowList.add(list);
         initRecyclerView();
     }
 
@@ -57,7 +62,7 @@ public class SecondMatrix extends AppCompatActivity {
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.second_matrix_list_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new MatrixRecyclerViewAdapter(rowList);
+        adapter = new MatrixRecyclerViewAdapter(rowList, firstColumns);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         //Add swipe functionality to delete Symptoms
@@ -70,7 +75,7 @@ public class SecondMatrix extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                adapter.rowRemoved(position);
+                adapter.rowRemoved(position,getApplicationContext());
             }
         });
         helper.attachToRecyclerView(recyclerView);
@@ -116,6 +121,7 @@ public class SecondMatrix extends AppCompatActivity {
                 intent.putExtra(FirstMatrix.FIRST_MATRIX_ROWS, firstRows);
                 intent.putExtra(SECOND_MATRIX_COLUMNS, adapter.getColumns());
                 intent.putExtra(SECOND_MATRIX_ROWS, rows);
+                intent.putExtra(Lobby.SERVANTS, servants);
                 startActivity(intent);
             }else{
                 Toast.makeText(getApplicationContext(), "Invalid dimensions based on Matrix 1 # of columns",

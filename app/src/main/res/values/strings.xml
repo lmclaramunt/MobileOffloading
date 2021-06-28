@@ -15,9 +15,10 @@
     <string name="please_confirm">Please Confirm</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="first_matrix_preview">Matrix Multiplication Preview</string>
+    <string name="first_matrix_preview">Matrix Multiplication</string>
     <string name="second_matrix">Second Matrix</string>
     <string name="matrix_multiplication">*</string>
     <string name="process">Process</string>
     <string name="restart">Restart</string>
+    <string name="equal">=</string>
 </resources>

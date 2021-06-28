@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class FirstMatrix extends AppCompatActivity {
     private static ArrayList<ArrayList<Integer>> rowList;
     private MatrixRecyclerViewAdapter adapter;
+    private int servants;
     public static String FIRST_MATRIX_COLUMNS = "first_columns";
     public static String FIRST_MATRIX_ROWS = "first_rows";
 
@@ -36,13 +37,21 @@ public class FirstMatrix extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_matrix);
         setTitle("Admin");
+        servants = getIntent().getIntExtra(Lobby.SERVANTS, 0);
         rowList = new ArrayList<>();
+//        for(int i = 0; i < servants; i++){
+//            rowList.add(new ArrayList<>());
+//        }
         ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
         list.add(1);
         list.add(2);
         list.add(3);
         rowList.add(list);
         rowList.add(list);
+        list = new ArrayList<>();    // Lines to facilitate debugging
+        list.add(4);
+        list.add(5);
+        list.add(6);
         rowList.add(list);
         rowList.add(list);
         initRecyclerView();
@@ -55,7 +64,7 @@ public class FirstMatrix extends AppCompatActivity {
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.matrix_list_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new MatrixRecyclerViewAdapter(rowList);
+        adapter = new MatrixRecyclerViewAdapter(rowList, servants);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         //Add swipe functionality to delete Symptoms
@@ -68,7 +77,7 @@ public class FirstMatrix extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                adapter.rowRemoved(position);
+                adapter.rowRemoved(position, getApplicationContext());
             }
         });
         helper.attachToRecyclerView(recyclerView);
@@ -117,6 +126,7 @@ public class FirstMatrix extends AppCompatActivity {
             Intent intent = new Intent(this, SecondMatrix.class);
             intent.putExtra(FIRST_MATRIX_COLUMNS, columns);
             intent.putExtra(FIRST_MATRIX_ROWS, rows);
+            intent.putExtra(Lobby.SERVANTS, servants);
             startActivity(intent);
         }
     }

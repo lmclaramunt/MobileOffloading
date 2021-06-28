@@ -28,8 +28,9 @@ import io.socket.emitter.Emitter;
 public class MatrixPrev extends AppCompatActivity {
     private ArrayList<ArrayList<Integer>> firstMatrix, secondMatrix;
     private Socket socket;
-    private int firstRows, secondRows, secondColumns;
+    private int firstRows, secondRows, secondColumns, servants, resultsReceived;
     private int[][] multiplicationResults;
+    private TextView tvEqual, tvResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +39,20 @@ public class MatrixPrev extends AppCompatActivity {
         setTitle("Admin");
         TextView tvFirstMatrix = findViewById(R.id.tvFirstMatrix);
         TextView tvSecondMatrix = findViewById(R.id.tvSecondMatrix);
+        tvEqual = findViewById(R.id.tvMasterEqual);
+        tvResults = findViewById(R.id.tvMasterResults);
         Intent intent = getIntent();
         firstRows = intent.getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
         secondRows = intent.getIntExtra(SecondMatrix.SECOND_MATRIX_ROWS, 0);
         secondColumns = intent.getIntExtra(SecondMatrix.SECOND_MATRIX_COLUMNS, 0);
         multiplicationResults = new int[firstRows][secondColumns];
+        servants = intent.getIntExtra(Lobby.SERVANTS, 0);
+        multiplicationResults = new int[firstRows][secondColumns];
         firstMatrix = FirstMatrix.getMatrix();
         secondMatrix = SecondMatrix.getMatrix();
         displayMatrixPreview(firstMatrix, tvFirstMatrix);
         displayMatrixPreview(secondMatrix, tvSecondMatrix);
+        resultsReceived = 0;        // Result received from servants
         Server server = (Server) getApplication();
         socket = server.getSocket();
         socket.on("partial results", onPartialResults);
@@ -110,7 +116,32 @@ public class MatrixPrev extends AppCompatActivity {
      * When a servant reports matrix multiplication results
      */
     private final Emitter.Listener onPartialResults = args -> runOnUiThread(() -> {
-
+        try{
+            JSONObject matrixInfo = (JSONObject) args[0];
+            int rows = matrixInfo.getInt("rows");
+            int columns = matrixInfo.getInt("columns");
+            int firstRow = matrixInfo.getInt("firstRowAssigned");
+            int lastRow = matrixInfo.getInt("lastRowAssigned");
+            JSONArray matrixArray = matrixInfo.getJSONArray("multiplication");
+            int[][] partialResult = Servant.getMatrix(matrixArray, columns);
+            updateResultMatrix(partialResult, firstRow, lastRow);
+            resultsReceived++;
+            if(resultsReceived == servants){
+                Servant.displayMatrix(multiplicationResults, tvResults);
+                tvEqual.setVisibility(View.VISIBLE);
+                tvResults.setVisibility(View.VISIBLE);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     });
+
+    private void updateResultMatrix(int[][] results, int startRow, int endRow){
+        for(int row = startRow; row <= endRow; row++){
+            for(int col = 0; col < results[0].length; col++){
+                multiplicationResults[row][col] = results[row-startRow][col];
+            }
+        }
+    }
 
 }

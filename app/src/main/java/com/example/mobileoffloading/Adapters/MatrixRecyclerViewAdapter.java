@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,7 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
 
     private ArrayList<ArrayList<Integer>> rowList;      // Double ArrayList
     private OnItemClickListener listener;
-    private int rows, columns;
+    private int rows, columns, min;
 
 
     /**
@@ -69,10 +68,11 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
         }
     }
 
-    public MatrixRecyclerViewAdapter(ArrayList<ArrayList<Integer>> rowList){
+    public MatrixRecyclerViewAdapter(ArrayList<ArrayList<Integer>> rowList, int min){
         this.rowList = rowList;
         columns = 0;
         rows = 0;
+        this.min = min;
     }
 
     /**
@@ -127,25 +127,21 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
         notifyItemInserted(rowList.size()-1);
     }
 
-    /**
-     *
-     * @param position - Position in the ArrayList
-     * @param row - matrix's row that was updated
-     */
-    public void rowUpdated(int position, ArrayList<Integer> row){
-        rowList.set(position, row);
-        notifyItemChanged(position);
-    }
-
 
     /**
      * An admin removed the row from the matrix. Update the RecyclerView
      * @param position - position in the arrayList
      */
-    public void rowRemoved(int position){
-        rowList.remove(position);
-        notifyItemRemoved(position);
+    public void rowRemoved(int position, Context context){
+        if(rowList.size()-1 < min) {
+            Toast.makeText(context, "Cannot delete row", Toast.LENGTH_SHORT).show();
+            notifyItemChanged(position);
+        }else {
+            rowList.remove(position);
+            notifyItemRemoved(position);
+        }
     }
+
 
     /**
      * Check if the user wrote a matrix with proper dimensions (rows and columns)

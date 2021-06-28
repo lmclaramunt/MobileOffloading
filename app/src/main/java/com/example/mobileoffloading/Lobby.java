@@ -37,6 +37,7 @@ import io.socket.emitter.Emitter;
  * When someone starts the task, the role of Admin will be assigned to one user
  */
 public class Lobby extends AppCompatActivity {
+    public static final String SERVANTS = "servants";
     private ArrayList<User> userList;
     private UserRecyclerViewAdapter adapter;
     private Socket socket;
@@ -190,7 +191,7 @@ public class Lobby extends AppCompatActivity {
             JSONObject data = (JSONObject) args[0];
             int servants = data.getInt("servants");
             Intent intent = new Intent(getApplicationContext(), FirstMatrix.class);
-            intent.putExtra("servants", servants);
+            intent.putExtra(SERVANTS, servants);
             startActivity(intent);
         } catch (JSONException e) {
             e.printStackTrace();
