@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MobileOffloading</string>
     <string name="username">Username</string>
@@ -7,7 +8,7 @@
     <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
     <string name="admin">ADMIN</string>
-    <string name="preview_matrix">Preview Matrix</string>
+    <string name="preview_matrix">Preview Matrices</string>
     <string name="first_matrix_instructions">Write the first matrix for matrix multiplication</string>
     <string name="second_matrix_instructions">Write the second matrix for matrix multiplication.</string>
     <string name="numbers_separated_by_commas">Numbers separated by commas</string>
@@ -15,10 +16,27 @@
     <string name="please_confirm">Please Confirm</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="first_matrix_preview">Matrix Multiplication</string>
+    <string name="first_matrix_preview"><br/>Matrix Multiplication<br/></string>
     <string name="second_matrix">Second Matrix</string>
     <string name="matrix_multiplication">*</string>
     <string name="process">Process</string>
     <string name="restart">Restart</string>
     <string name="equal">=</string>
+    <string name="t_first_matrix">&#160;&#160;&#160;&#160;
+        First Matrix:</string>
+    <string name="t_second_matrix">&#160;&#160;&#160;&#160;
+        Second Matrix:</string>
+    <string name="result_matrix">&#160;&#160;&#160;&#160;
+        Result Matrix:</string>
+    <string name="servant_instructions">The master will send you two matrices to multiply.<br/>
+        Results will displayed automatically once they are received.<br/>
+        Please wait for them.<br/></string>
+    <string name="distributed_approach">&#160;&#160;&#160;&#160;
+        Distributed Approach</string>
+    <string name="analysis">&#160;&#160;&#160;&#160;
+        Analysis</string>
+    <string name="test_true">&#160;&#160;&#160;&#160;
+        The master sent you the entire matrices!</string>
+    <string name="test_false">&#160;&#160;&#160;&#160;
+        The master send you part of the matrices.</string>
 </resources>

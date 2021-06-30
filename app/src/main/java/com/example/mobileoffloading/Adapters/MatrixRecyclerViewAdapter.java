@@ -152,7 +152,7 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
             if (i == 0) {
                 columns = rowList.get(i).size();
             }else if(columns != rowList.get(i).size()){
-                Toast.makeText(context, "Row "+ (i+1) +"has wrong dimensions",
+                Toast.makeText(context, "Row "+ (i+1) +" has wrong dimensions",
                         Toast.LENGTH_SHORT).show();
                 return false;
             }

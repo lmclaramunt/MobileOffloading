@@ -1,5 +1,6 @@
 package com.example.mobileoffloading;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -25,28 +26,47 @@ import io.socket.emitter.Emitter;
  */
 public class Servant extends AppCompatActivity {
     private Socket socket;
-    private TextView tvMultiplication, tvEqual, tvFirstMat, tvSecondMat, tvResult;
+    private TextView tvMultiplication, tvEqual, tvFirstMat, tvSecondMat, tvResult,
+            tvAnalysis, tvTime, tvPower, tvSerFm, tvSerSm, tvSerRm, tvSerTestTrue, tvSerTestFalse;
+    private long startTime, finishTime;
+    private boolean testing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_servant);
         setTitle("Servant");
-        String id = getIntent().getStringExtra("id");
-        tvFirstMat = findViewById(R.id.tvFirstMatrixServant);
-        tvSecondMat = findViewById(R.id.tvSecondMatrixServant);
-        tvResult = findViewById(R.id.tvResultServant);
-        tvMultiplication = findViewById(R.id.tvServantMultiplication);
-        tvEqual = findViewById(R.id.tvServantEqual);
+        initializeUI();
         Server server = (Server) getApplication();
         socket = server.getSocket();
         socket.on("servant matrices", onMatricesArrived);
+        socket.on("servant test", onServantTest);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        socket.on("servant matrices", onMatricesArrived);
+        socket.off("servant matrices", onMatricesArrived);
+        socket.off("servant test", onServantTest);
+    }
+
+    /**
+     * Find elements by ID
+     */
+    private void initializeUI(){
+        tvFirstMat = findViewById(R.id.tvFirstMatrixServant);
+        tvSecondMat = findViewById(R.id.tvSecondMatrixServant);
+        tvResult = findViewById(R.id.tvResultServant);
+        tvMultiplication = findViewById(R.id.tvServantMultiplication);
+        tvEqual = findViewById(R.id.tvServantEqual);
+        tvAnalysis = findViewById(R.id.tvServantProcess);
+        tvTime = findViewById(R.id.tvServantTime);
+        tvPower = findViewById(R.id.tvServantPower);
+        tvSerFm = findViewById(R.id.tvSerFm);
+        tvSerSm = findViewById(R.id.tvSerSm);
+        tvSerRm = findViewById(R.id.tvSerRm);
+        tvSerTestTrue = findViewById(R.id.tvSerTestTrue);
+        tvSerTestFalse = findViewById(R.id.tvSerTestFalse);
     }
 
     /**
@@ -54,6 +74,7 @@ public class Servant extends AppCompatActivity {
      */
     private final Emitter.Listener onMatricesArrived = args -> runOnUiThread(() -> {
         try {
+            testing = false;
             JSONObject matricesInfo = (JSONObject) args[0];
             int firstMatRows = matricesInfo.getInt("finalRows");
             int secondMatRows = matricesInfo.getInt("secondRows");
@@ -64,12 +85,13 @@ public class Servant extends AppCompatActivity {
             JSONArray secondArray = matricesInfo.getJSONArray("secondMatrix");
             int[][] firstMatrix = getMatrix(firstArray, secondMatRows);
             int[][] secondMatrix = getMatrix(secondArray, secondMatCol);
+            startTime = System.nanoTime();
+            int[][] multiplication = matrixMultiplication(firstMatrix, secondMatrix);
+            finishTime = System.nanoTime();
             displayMatrix(firstMatrix, tvFirstMat);
             displayMatrix(secondMatrix, tvSecondMat);
-            tvMultiplication.setVisibility(View.VISIBLE);
-            int[][] multiplication = matrixMultiplication(firstMatrix, secondMatrix);
             displayMatrix(multiplication, tvResult);
-            tvEqual.setVisibility(View.VISIBLE);
+            displayResults();
             JSONArray mult = arrayToJSON(multiplication);
             JSONObject resultObj = new JSONObject();
             resultObj.put("rows", firstMatRows);
@@ -78,6 +100,32 @@ public class Servant extends AppCompatActivity {
             resultObj.put("lastRowAssigned", lastRowAssigned);
             resultObj.put("multiplication", mult);
             socket.emit("multiplication result", resultObj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    });
+
+    /**
+     * The master send the entire matrices to the servants, multiply them and display
+     * time and power consumption info
+     */
+    private final Emitter.Listener onServantTest = args -> runOnUiThread(() -> {
+        try {
+            testing = true;
+            JSONObject matricesInfo = (JSONObject) args[0];
+            int firstMatColumns = matricesInfo.getInt("firstColumns");
+            int secondMatCol = matricesInfo.getInt("secondColumns");
+            JSONArray firstArray = matricesInfo.getJSONArray("firstMatrix");
+            JSONArray secondArray = matricesInfo.getJSONArray("secondMatrix");
+            int[][] firstMatrix = getMatrix(firstArray, firstMatColumns);
+            int[][] secondMatrix = getMatrix(secondArray, secondMatCol);
+            startTime = System.nanoTime();
+            int[][] multiplication = matrixMultiplication(firstMatrix, secondMatrix);
+            finishTime = System.nanoTime();
+            displayMatrix(firstMatrix, tvFirstMat);
+            displayMatrix(secondMatrix, tvSecondMat);
+            displayMatrix(multiplication, tvResult);
+            displayResults();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -108,12 +156,14 @@ public class Servant extends AppCompatActivity {
      * @return - matrix after multiplying both matrices
      */
     private int[][] matrixMultiplication(int[][] firstMatrix, int[][] secondMatrix){
-        int[][] multiplication = new int[firstMatrix.length][secondMatrix.length];
+        int[][] multiplication = new int[firstMatrix.length][secondMatrix[0].length];
         for(int row = 0; row < firstMatrix.length; row++){
-            for(int column = 0; column < secondMatrix[row].length; column++){
-                for(int i = 0; i < secondMatrix.length; i++){
-                    multiplication[row][column] += firstMatrix[row][i] * secondMatrix[i][column];
+            for(int column = 0; column < secondMatrix[0].length; column++){
+                int cell = 0;
+                for(int i = 0; i < secondMatrix[0].length; i++){
+                    cell += firstMatrix[row][i] * secondMatrix[i][column];
                 }
+                multiplication[row][column] = cell;
             }
         }
         return multiplication;
@@ -126,9 +176,9 @@ public class Servant extends AppCompatActivity {
      */
     public static void displayMatrix(int[][] matrix, TextView tv){
         StringBuilder builder = new StringBuilder();
-        for(int row = 0; row < matrix.length; row++){
-            for(int column = 0; column < matrix[row].length; column++){
-                builder.append(matrix[row][column]);
+        for (int[] ints : matrix) {
+            for (int anInt : ints) {
+                builder.append(anInt).append(" ");
             }
             builder.append("\n");
         }
@@ -150,5 +200,31 @@ public class Servant extends AppCompatActivity {
             finalArray.put(rowArray);
         }
         return finalArray;
+    }
+
+    /**
+     * Display results in UI after the matrices have been multiplied
+     */
+    @SuppressLint("SetTextI18n")
+    private void displayResults(){
+        if(testing){
+            tvSerTestTrue.setVisibility(View.VISIBLE);
+            tvSerTestFalse.setVisibility(View.GONE);
+        }else{
+            tvSerTestFalse.setVisibility(View.VISIBLE);
+            tvSerTestTrue.setVisibility(View.GONE);
+        }
+        tvEqual.setVisibility(View.VISIBLE);
+        tvMultiplication.setVisibility(View.VISIBLE);
+        tvResult.setVisibility(View.VISIBLE);
+        tvAnalysis.setVisibility(View.VISIBLE);
+        tvTime.setVisibility(View.VISIBLE);
+        tvPower.setVisibility(View.VISIBLE);
+        tvSerFm.setVisibility(View.VISIBLE);
+        tvSerSm.setVisibility(View.VISIBLE);
+        tvSerRm.setVisibility(View.VISIBLE);
+        double elapseTime = (finishTime - startTime) / 1_000_000_000.0;
+        tvTime.setText("\t\t\tTime elapsed: " + elapseTime + " s");
+        tvPower.setText("\t\t\tPower used: ");
     }
 }

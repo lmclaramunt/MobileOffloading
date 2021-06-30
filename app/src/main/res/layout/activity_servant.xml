@@ -23,7 +23,16 @@
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:gravity="center"
-                android:text="The master will send you two matrices to multiply.\n Results will displayed automatically once they are received.\nPlease wait for them." />
+                android:text="@string/servant_instructions" />
+
+            <TextView
+                android:id="@+id/tvSerFm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="@string/t_first_matrix"  />
 
             <TextView
                 android:id="@+id/tvFirstMatrixServant"
@@ -45,6 +54,15 @@
 
 
             <TextView
+                android:id="@+id/tvSerSm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/t_second_matrix"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
                 android:id="@+id/tvSecondMatrixServant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,10 +81,61 @@
                 android:text="@string/equal" />
 
             <TextView
+                android:id="@+id/tvSerRm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                android:text="@string/result_matrix" />
+
+            <TextView
                 android:id="@+id/tvResultServant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvServantProcess"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/analysis"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/tvSerTestTrue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="@string/test_true" />
+
+            <TextView
+                android:id="@+id/tvSerTestFalse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="@string/test_false" />
+
+            <TextView
+                android:id="@+id/tvServantTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/tvServantPower"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:textSize="16sp"
                 android:textColor="@color/black" />
         </LinearLayout>

@@ -202,15 +202,8 @@ public class Lobby extends AppCompatActivity {
      * The user is a valid servant, so take him/her to the servant class
      */
     private final Emitter.Listener onGoServant = args -> runOnUiThread(() -> {
-        try {
-            JSONObject data = (JSONObject) args[0];
-            String id = data.getString("id");
-            Intent intent = new Intent(getApplicationContext(), Servant.class);
-            intent.putExtra("id", id);
-            startActivity(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(getApplicationContext(), Servant.class);
+        startActivity(intent);
     });
 
     /**
