@@ -27,7 +27,7 @@ import io.socket.emitter.Emitter;
  *         Jianlun Li
  * Let the Admin Preview both matrixes that will be multiplied
  */
-public class MatrixPrev extends AppCompatActivity {
+public class Master extends AppCompatActivity {
     private ArrayList<ArrayList<Integer>> firstMatrix, secondMatrix;
     private Socket socket;
     private int firstRows, secondRows, secondColumns, servants, resultsReceived;
@@ -36,17 +36,19 @@ public class MatrixPrev extends AppCompatActivity {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch swDistribute;
     private long startTime, finishTime;
+    private float finishBattery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_matrix_prev);
+        setContentView(R.layout.activity_master);
         setTitle("Admin");
         initiateUI();
         resultsReceived = 0;        // Result received from servants
         Server server = (Server) getApplication();
         socket = server.getSocket();
         socket.on("partial results", onPartialResults);
+        finishBattery = -1;
     }
 
     @Override
@@ -98,7 +100,7 @@ public class MatrixPrev extends AppCompatActivity {
     }
 
     /**
-     * Let the Admin start the second matrix
+     * The Admin is ready to go through the matrix multiplication process
      * @param view - for button
      */
     public void uploadMatrix(View view) {
@@ -193,8 +195,12 @@ public class MatrixPrev extends AppCompatActivity {
         finishTime = System.nanoTime();
     }
 
+    /**
+     * Display calculation results along with time and power
+     */
     @SuppressLint("SetTextI18n")
     private void displayResults(){
+        finishBattery = Lobby.getBattery();     //Battery at the end of the process
         tvEqual.setVisibility(View.VISIBLE);
         tvResults.setVisibility(View.VISIBLE);
         tvMatResult.setVisibility(View.VISIBLE);
@@ -203,7 +209,10 @@ public class MatrixPrev extends AppCompatActivity {
         tvPower.setVisibility(View.VISIBLE);
         double elapseTime = (finishTime - startTime) / 1_000_000_000.0;
         tvTime.setText("\t\tTime elapsed: " + elapseTime + " s");
-        tvPower.setText("\t\tPower used: ");
+        float batteryChange = finishBattery - FirstMatrix.startBattery;
+        FirstMatrix.startBattery = finishBattery;           // In case the process the process starts again
+        tvPower.setText("\t\tPower used: " + batteryChange + "% of battery");
+        resultsReceived = 0;
     }
 
 }

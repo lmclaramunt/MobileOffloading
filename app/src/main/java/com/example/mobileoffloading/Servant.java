@@ -30,6 +30,7 @@ public class Servant extends AppCompatActivity {
             tvAnalysis, tvTime, tvPower, tvSerFm, tvSerSm, tvSerRm, tvSerTestTrue, tvSerTestFalse;
     private long startTime, finishTime;
     private boolean testing;
+    private float startBattery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class Servant extends AppCompatActivity {
         setContentView(R.layout.activity_servant);
         setTitle("Servant");
         initializeUI();
+        startBattery = Lobby.getBattery();
         Server server = (Server) getApplication();
         socket = server.getSocket();
         socket.on("servant matrices", onMatricesArrived);
@@ -207,6 +209,7 @@ public class Servant extends AppCompatActivity {
      */
     @SuppressLint("SetTextI18n")
     private void displayResults(){
+        float finishBattery = Lobby.getBattery();      // Battery when process ends
         if(testing){
             tvSerTestTrue.setVisibility(View.VISIBLE);
             tvSerTestFalse.setVisibility(View.GONE);
@@ -225,6 +228,8 @@ public class Servant extends AppCompatActivity {
         tvSerRm.setVisibility(View.VISIBLE);
         double elapseTime = (finishTime - startTime) / 1_000_000_000.0;
         tvTime.setText("\t\t\tTime elapsed: " + elapseTime + " s");
-        tvPower.setText("\t\t\tPower used: ");
+        float changeBattery = finishBattery - startBattery;
+        tvPower.setText("\t\t\tPower used: " + changeBattery + "% of battery");
+        startBattery = finishBattery;       // In case the process restarts
     }
 }

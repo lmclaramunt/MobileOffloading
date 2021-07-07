@@ -107,7 +107,7 @@ public class Login extends AppCompatActivity {
      * @param context - Context
      * @return - int, device's battery percentage
      */
-    private int getBattery(Context context) {
+    public static int getBattery(Context context) {
         BatteryManager batteryMan = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
         return batteryMan.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
     }

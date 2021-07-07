@@ -117,7 +117,7 @@ public class SecondMatrix extends AppCompatActivity {
         if(adapter.validateMatrix(getApplicationContext())){
             int rows = adapter.getRows();
             if(rows == firstColumns) {
-                Intent intent = new Intent(this, MatrixPrev.class);
+                Intent intent = new Intent(this, Master.class);
                 intent.putExtra(FirstMatrix.FIRST_MATRIX_ROWS, firstRows);
                 intent.putExtra(SECOND_MATRIX_COLUMNS, adapter.getColumns());
                 intent.putExtra(SECOND_MATRIX_ROWS, rows);

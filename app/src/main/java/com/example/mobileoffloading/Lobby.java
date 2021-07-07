@@ -41,7 +41,7 @@ public class Lobby extends AppCompatActivity {
     private ArrayList<User> userList;
     private UserRecyclerViewAdapter adapter;
     private Socket socket;
-    private float battery;
+    private static float battery;
     private String username;
     private Button btnStart;
     //Used to constantly monitor device's battery
@@ -67,7 +67,6 @@ public class Lobby extends AppCompatActivity {
         battery = getIntent().getFloatExtra(Login.BATTERY, 0);
         username = getIntent().getStringExtra(Login.USERNAME);
         this.registerReceiver(this.batteryBroadcast, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        userList = new ArrayList<>();
         btnStart = findViewById(R.id.btnStart);
         Server server = (Server) getApplication();
         socket = server.getSocket();
@@ -83,6 +82,7 @@ public class Lobby extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        userList = new ArrayList<>();
         initRecyclerView();
         socket.emit("joinLobby", "");
     }
@@ -240,4 +240,6 @@ public class Lobby extends AppCompatActivity {
     public void startMasterActivity(View view) {
         socket.emit("start master", "");
     }
+
+    public static float getBattery(){ return battery;}
 }

@@ -20,7 +20,7 @@
             android:launchMode="singleTop"
             android:parentActivityName=".FirstMatrix"/>
         <activity
-            android:name=".MatrixPrev"
+            android:name=".Master"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".SecondMatrix" />

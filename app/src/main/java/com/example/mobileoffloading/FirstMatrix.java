@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,13 +33,17 @@ public class FirstMatrix extends AppCompatActivity {
     private int servants;
     public static String FIRST_MATRIX_COLUMNS = "first_columns";
     public static String FIRST_MATRIX_ROWS = "first_rows";
+    public static float startBattery;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_matrix);
         setTitle("Admin");
         servants = getIntent().getIntExtra(Lobby.SERVANTS, 0);
+        TextView servantsNo = findViewById(R.id.tvMasterServants);
+        servantsNo.setText("\t\t\tNo. Servants: " + servants);
         rowList = new ArrayList<>();
 //        for(int i = 0; i < servants; i++){
 //            rowList.add(new ArrayList<>());
@@ -55,6 +61,7 @@ public class FirstMatrix extends AppCompatActivity {
         rowList.add(list);
         rowList.add(list);
         initRecyclerView();
+        startBattery = Lobby.getBattery();
     }
 
 
@@ -120,9 +127,14 @@ public class FirstMatrix extends AppCompatActivity {
      * @param view - for button
      */
     public void submitFirstMatrix(View view) {
+        int rows = adapter.getRows();
+        if(rows % servants != 0){
+            Toast.makeText(getApplicationContext(), "Wrong number of rows for this matrix",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         if(adapter.validateMatrix(getApplicationContext())){
             int columns = adapter.getColumns();
-            int rows = adapter.getRows();
             Intent intent = new Intent(this, SecondMatrix.class);
             intent.putExtra(FIRST_MATRIX_COLUMNS, columns);
             intent.putExtra(FIRST_MATRIX_ROWS, rows);
