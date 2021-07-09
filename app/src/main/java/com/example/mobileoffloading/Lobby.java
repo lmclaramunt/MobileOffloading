@@ -9,6 +9,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -77,6 +78,7 @@ public class Lobby extends AppCompatActivity {
         socket.on("rejected", onRejected);
         socket.on("go admin", onGoAdmin);
         socket.on("go servant", onGoServant);
+        socket.on("lobby closed", onLobbyClosed);
     }
 
     @Override
@@ -205,6 +207,13 @@ public class Lobby extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), Servant.class);
         startActivity(intent);
     });
+
+    /**
+     * The Lobby is closed as the master is using it
+     */
+    private final Emitter.Listener onLobbyClosed = args -> runOnUiThread(() ->
+            Toast.makeText(getApplicationContext(), "The Lobby is currenly closed",
+            Toast.LENGTH_SHORT).show());
 
     /**
      * Process JSON files that contain User's data

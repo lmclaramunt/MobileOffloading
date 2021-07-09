@@ -162,7 +162,7 @@ public class Servant extends AppCompatActivity {
         for(int row = 0; row < firstMatrix.length; row++){
             for(int column = 0; column < secondMatrix[0].length; column++){
                 int cell = 0;
-                for(int i = 0; i < secondMatrix[0].length; i++){
+                for(int i = 0; i < firstMatrix[0].length; i++){
                     cell += firstMatrix[row][i] * secondMatrix[i][column];
                 }
                 multiplication[row][column] = cell;

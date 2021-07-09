@@ -43,16 +43,16 @@ public class SecondMatrix extends AppCompatActivity {
         firstRows = intent.getIntExtra(FirstMatrix.FIRST_MATRIX_ROWS, 0);
         servants = intent.getIntExtra(Lobby.SERVANTS, 0);
         rowList = new ArrayList<>();
-//        for(int i = 0; i < firstColumns; i++){
-//            rowList.add(new ArrayList<>());
-//        }
-        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
-        list.add(7);
-        list.add(8);
-        list.add(9);
-        rowList.add(list);
-        rowList.add(list);
-        rowList.add(list);
+        for(int i = 0; i < firstColumns; i++){
+            rowList.add(new ArrayList<>());
+        }
+//        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
+//        list.add(7);
+//        list.add(8);
+//        list.add(9);
+//        rowList.add(list);
+//        rowList.add(list);
+//        rowList.add(list);
         initRecyclerView();
     }
 

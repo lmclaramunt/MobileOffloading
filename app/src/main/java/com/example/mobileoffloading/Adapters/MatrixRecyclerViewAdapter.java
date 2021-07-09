@@ -31,7 +31,7 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
 
     private ArrayList<ArrayList<Integer>> rowList;      // Double ArrayList
     private OnItemClickListener listener;
-    private int rows, columns, min;
+    private final int min;
 
 
     /**
@@ -70,8 +70,6 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
 
     public MatrixRecyclerViewAdapter(ArrayList<ArrayList<Integer>> rowList, int min){
         this.rowList = rowList;
-        columns = 0;
-        rows = 0;
         this.min = min;
     }
 
@@ -148,6 +146,7 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
      * @return - boolean, true if valid and false if invalid
      */
     public boolean validateMatrix(Context context){
+        int columns = 0;
         for(int i = 0; i < rowList.size(); i++) {
             if (i == 0) {
                 columns = rowList.get(i).size();
@@ -157,7 +156,6 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
                 return false;
             }
         }
-        rows = rowList.size();
         return true;
     }
 
@@ -165,13 +163,13 @@ public class MatrixRecyclerViewAdapter extends RecyclerView.Adapter<MatrixRecycl
      * Get Matrix's Rows
      * @return - int
      */
-    public int getRows(){return rows;}
+    public int getRows(){return rowList.size();}
 
     /**
      * Get Matrix's Columns
      * @return - int
      */
-    public int getColumns(){return columns;}
+    public int getColumns(){return (rowList.size() == 0) ? 0 : rowList.get(0).size();}
 
     /**
      * Get the number of user displayed in the RecyclerView

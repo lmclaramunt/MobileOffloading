@@ -1,6 +1,7 @@
 package com.example.mobileoffloading;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -17,8 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobileoffloading.Adapters.MatrixRecyclerViewAdapter;
+import com.example.mobileoffloading.Utils.Server;
 
 import java.util.ArrayList;
+
+import io.socket.client.Socket;
 
 /**
  * @author Luis Claramunt
@@ -45,21 +50,21 @@ public class FirstMatrix extends AppCompatActivity {
         TextView servantsNo = findViewById(R.id.tvMasterServants);
         servantsNo.setText("\t\t\tNo. Servants: " + servants);
         rowList = new ArrayList<>();
-//        for(int i = 0; i < servants; i++){
-//            rowList.add(new ArrayList<>());
-//        }
-        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        rowList.add(list);
-        rowList.add(list);
-        list = new ArrayList<>();    // Lines to facilitate debugging
-        list.add(4);
-        list.add(5);
-        list.add(6);
-        rowList.add(list);
-        rowList.add(list);
+        for(int i = 0; i < servants; i++){
+            rowList.add(new ArrayList<>());
+        }
+//        ArrayList<Integer> list = new ArrayList<>();    // Lines to facilitate debugging
+//        list.add(1);
+//        list.add(2);
+//        list.add(3);
+//        rowList.add(list);
+//        rowList.add(list);
+//        list = new ArrayList<>();    // Lines to facilitate debugging
+//        list.add(4);
+//        list.add(5);
+//        list.add(6);
+//        rowList.add(list);
+//        rowList.add(list);
         initRecyclerView();
         startBattery = Lobby.getBattery();
     }
@@ -148,4 +153,5 @@ public class FirstMatrix extends AppCompatActivity {
      * @return - First Matrix
      */
     public static ArrayList<ArrayList<Integer>> getMatrix(){ return rowList;}
+
 }
